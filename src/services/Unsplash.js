@@ -9,7 +9,7 @@ export default class UnsplashService {
     }
 
     async getTopicPhotos(topic, page = 1) {
-        const result = await fetch('https://api.unsplash.com/topics/'+ topic +'/photos/?client_id='+ this.access_key +'&per_page=12&page='+page)
+        const result = await fetch('https://api.unsplash.com/topics/'+ topic +'/photos/?client_id='+ this.access_key +'&per_page=8&page='+page)
         .then(response => response.json());
         return result
     }

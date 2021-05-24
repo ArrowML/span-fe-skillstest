@@ -1,8 +1,11 @@
 <template>
   <nav @click="toggleNav" :class="{ open: nav_open }">
-     <ul class="topics">
-        <li v-for="topic of topics" :key=topic.id @click.stop="setTopic(topic.slug, $event)"><span class="topic-icon">A</span> <span class="topic-text">{{ topic.title }}</span></li>
-     </ul>
+    <div class="nav-toggle">
+      <font-awesome-icon icon="bars" />
+    </div>
+    <ul class="topics">
+      <li v-for="topic of topics" :key=topic.id @click.stop="setTopic(topic.slug, $event)"><span class="topic-icon"><font-awesome-icon :icon=iconMap[topic.slug] /></span> <span class="topic-text">{{ topic.title }}</span></li>
+    </ul>
   </nav>
 </template>
 
@@ -17,10 +20,23 @@ export default {
   data() {
     return {
       nav_open: false,
-      topics: {}
+      topics: {},
+      iconMap: {
+        'interiors' : 'home',
+        'street-photography' : 'camera',
+        'technology' : 'microchip',
+        'travel' : 'passport',
+        'textures-patterns' : 'swatchbook',
+        'covid-19' : 'virus',
+        'animals' : 'paw',
+        'food-drink' : 'utensils',
+        'athletics' : 'running',
+        'spirituality' : 'book',
+      }
+    
     }
   },
-  emits: ['setTopic'],
+  emits: ['setTopic', 'navOpen'],
   mounted() {
     const response = this.service.getTopics();
     response.then(data => {
@@ -29,11 +45,17 @@ export default {
     });
   },
   methods:{
-    toggleNav() {
-      this.nav_open = !this.nav_open
+    toggleNav(action = 'toggle') {
+      if(action == 'close') {
+        this.nav_open = false;
+      } else {
+        this.nav_open = !this.nav_open;
+      }
+      this.$emit('navOpen', this.nav_open);
     },
     setTopic(topic) {
-      this.$emit('setTopic', topic)
+      this.$emit('setTopic', topic);
+      this.toggleNav('close');
     }
   }
 }
@@ -48,8 +70,14 @@ export default {
     transition: width 0.25s;
     overflow: hidden;
     color: #fff;
+    position: relative;
     &.open {
       width: bu(32);
+      .nav-toggle {
+        svg {
+          transform: rotate(180deg);
+        }
+      }
     }
     ul.topics {
       padding: 0px;
@@ -76,6 +104,20 @@ export default {
         &:hover {
           background-color: $shade-secondary;
         }
+      }
+    }
+    .nav-toggle {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin: bu(6) 0px;
+      &:hover {
+        color: $colour-primary;
+      }
+      svg {
+        transition: all 0.25s;
+        height: bu(2);
+        width: bu(2);
       }
     }
   }

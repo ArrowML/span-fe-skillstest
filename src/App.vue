@@ -1,8 +1,8 @@
 <template>
-  <vHeader></vHeader>
+  <vHeader :topic="selected_topic"></vHeader>
   <main>
-      <vNav :service="unsplashService" @setTopic="setSelectedTopic" ></vNav>
-      <PhotoViewer :service="unsplashService" :topic="selected_topic"></PhotoViewer>
+      <vNav :service="unsplashService" @setTopic="setSelectedTopic" @navOpen="setNavState"></vNav>
+      <PhotoViewer :service="unsplashService" :topic="selected_topic" :nav_open="nav_open"></PhotoViewer>
   </main>
 
 </template>
@@ -18,7 +18,8 @@ export default {
   data() {
     return {
       unsplashService: null,
-      selected_topic: ''
+      selected_topic: '',
+      nav_open: false
     }
   },
   components: {
@@ -32,6 +33,9 @@ export default {
   methods:{
     setSelectedTopic(value) {
       this.selected_topic = value;
+    },
+    setNavState(value) {
+      this.nav_open = value;
     }
   }
 }

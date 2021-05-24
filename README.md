@@ -1,5 +1,7 @@
 # span-fe-skillstest
 
+**Framework used:** Vue.js 3
+
 ## Project setup
 ```
 yarn install
