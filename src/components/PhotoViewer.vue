@@ -30,7 +30,9 @@ export default {
       current_topic: '',
       topic_images: [],
       scroll: 0,
-      page: 1
+      page: 1,
+      column: 1,
+      fetched_pages: []
     }
   },
   methods: {
@@ -38,35 +40,46 @@ export default {
       this.loading = true;
       this.service.getTopicPhotos(this.current_topic)
       .then(data => {
-        this.topic_images = data
+        this.topic_images = data;
         this.loading = false;
+        this.fetched_pages = [1];
       });
     },
     scrollImages(direction) {
       const scroll_distance = 582;
       if (direction == 'right') {
-        this.scroll -= scroll_distance 
-        this.page++
+        this.scroll -= scroll_distance ;
+        this.page++;
         if (this.page%2 == 0) {
-          this.service.getTopicPhotos(this.current_topic, this.page)
-          .then(data => {
-            this.topic_images.push(...data)
-          });
+          this.column++;
+          if (!this.fetched_pages.includes(this.column)) {
+            this.service.getTopicPhotos(this.current_topic, this.column)
+            .then(data => {
+              this.topic_images.push(...data);
+            });
+          }
+          this.fetched_pages.push(this.column);
+          console.log(this.fetched_pages);
         }
       } 
       if (direction == 'left') {
         if (this.scroll != 0) {
-          this.scroll += scroll_distance 
-          this.page--
+          this.scroll += scroll_distance;
+          this.page--;
+          if (this.page%2 == 0) {
+            this.column--;
+          }
         }
       }
     }
   },
   watch: {
     topic(new_topic) {
-      this.scroll = 0
-      this.current_topic = new_topic
-      this.setTopicImages()
+      this.current_topic = new_topic;
+      this.scroll = 0;
+      this.page = 1;
+      this.column = 1;
+      this.setTopicImages();
     },
     nav_open(value) {
       this.loading = value;
